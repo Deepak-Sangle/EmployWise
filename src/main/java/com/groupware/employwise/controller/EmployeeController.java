@@ -2,6 +2,7 @@ package com.groupware.employwise.controller;
 
 import com.groupware.employwise.model.User;
 import com.groupware.employwise.service.EmployeeService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @PostMapping("/create")
-    public User createEmployee(@RequestBody User user) {
+    public User createEmployee(@RequestBody User user) throws MessagingException {
         return employeeService.addEmployee(user);
     }
 

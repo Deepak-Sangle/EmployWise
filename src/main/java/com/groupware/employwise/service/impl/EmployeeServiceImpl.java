@@ -3,6 +3,9 @@ package com.groupware.employwise.service.impl;
 import com.groupware.employwise.model.User;
 import com.groupware.employwise.repository.EmployeeRepository;
 import com.groupware.employwise.service.EmployeeService;
+import com.groupware.employwise.service.MailService;
+import jakarta.mail.MessagingException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +14,14 @@ import java.util.UUID;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
+
+    @Autowired
+    MailService mailService;
+
     @Override
-    public User addEmployee(User user) {
+    public User addEmployee(User user) throws MessagingException {
         user.setID(UUID.randomUUID().toString());
+        sendEmailToManager(user);
         EmployeeRepository.getInstance().saveUser(user);
         return user;
     }
@@ -57,6 +65,15 @@ public class EmployeeServiceImpl implements EmployeeService {
             return user;
         }
         return getNthLevelManager(n-1, user.getReportsTo());
+    }
+
+    @Override
+    public void sendEmailToManager(User user) throws MessagingException {
+        User manager = EmployeeRepository.getInstance().getUser(user.getReportsTo());
+        if(manager == null) {
+            return;
+        }
+        mailService.sendEmail(manager.getEmail(), "New Employee Added", "<p>A new employee has been added to your team. His phone number is " + user.getPhoneNumber() + " and email is " + user.getEmail() + ". </p>");
     }
 
 }
