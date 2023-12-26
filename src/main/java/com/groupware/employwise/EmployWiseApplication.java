@@ -11,7 +11,6 @@ public class EmployWiseApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EmployWiseApplication.class, args);
-		System.out.println("EmployWise Application Started");
 	}
 
 }

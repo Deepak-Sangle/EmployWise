@@ -7,18 +7,18 @@ import java.util.UUID;
 
 public class User extends CouchDbDocument {
 
-    @JsonProperty("Name")
+    @JsonProperty("name")
     private String Name;
-    @JsonProperty("PhoneNumber")
+    @JsonProperty("phoneNumber")
     private String PhoneNumber;
-    @JsonProperty("Email")
+    @JsonProperty("email")
     private String Email;
-    @JsonProperty("ReportsTo")
+    @JsonProperty("reportsTo")
     private String ReportsTo;
-    @JsonProperty("ProfileImage")
+    @JsonProperty("profileImage")
     private String ProfileImage;
-    @JsonProperty("EmployeeID")
-    private String EmployeeID;
+    @JsonProperty("_id")
+    private String ID;
 
     public String getName() {
         return Name;
@@ -40,8 +40,8 @@ public class User extends CouchDbDocument {
         return ProfileImage;
     }
 
-    public String getEmployeeID() {
-        return EmployeeID;
+    public String getID() {
+        return ID;
     }
 
     public void setName(String Name) {
@@ -64,8 +64,8 @@ public class User extends CouchDbDocument {
         this.ProfileImage = ProfileImage;
     }
 
-    public void setEmployeeID(String EmployeeID) {
-        this.EmployeeID = EmployeeID;
+    public void setID(String EmployeeID) {
+        this.ID = EmployeeID;
     }
 
     public User() {
@@ -74,7 +74,7 @@ public class User extends CouchDbDocument {
         this.PhoneNumber = "";
         this.ReportsTo = "";
         this.ProfileImage = "";
-        this.EmployeeID = UUID.randomUUID().toString();
+        this.ID = UUID.randomUUID().toString();
     }
 
     public User(String Name, String Email, String PhoneNumber, String ReportsTo, String ProfileImage) {
@@ -83,7 +83,7 @@ public class User extends CouchDbDocument {
         this.PhoneNumber = PhoneNumber;
         this.ReportsTo = ReportsTo;
         this.ProfileImage = ProfileImage;
-        this.EmployeeID = UUID.randomUUID().toString();
+        this.ID = UUID.randomUUID().toString();
     }
 
 }
