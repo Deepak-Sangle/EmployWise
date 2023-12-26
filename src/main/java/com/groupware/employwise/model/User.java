@@ -2,6 +2,8 @@ package com.groupware.employwise.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ektorp.support.CouchDbDocument;
+import org.ektorp.support.View;
+import org.ektorp.support.Views;
 
 import java.util.UUID;
 
