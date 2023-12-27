@@ -2,6 +2,9 @@ package com.groupware.employwise.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ektorp.support.CouchDbDocument;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import java.util.UUID;
@@ -100,6 +103,24 @@ public class User extends CouchDbDocument {
 
     public static boolean validatePhoneNumber(String phoneNumber) {
         return phoneNumber.matches("^[1-9][0-9]{9}$");
+    }
+
+    public static ResponseEntity<Response> validateRequiredFields(User user){
+        if(!Objects.equals(user.getEmail(), "") && !User.validateEmail(user.getEmail())){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response("Please enter a valid email", null));
+        }
+        if(!Objects.equals(user.getPhoneNumber(), "") && !User.validatePhoneNumber(user.getPhoneNumber())){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response("Please enter a valid phone number", null));
+        }
+        if(!Objects.equals(user.getReportsTo(), "") && !User.validateID(user.getReportsTo()))
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response("Please enter a valid Manager ID", null));
+        return null;
     }
 
 }

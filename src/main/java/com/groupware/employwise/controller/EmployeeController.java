@@ -28,18 +28,11 @@ public class EmployeeController {
             return ResponseEntity
                     .badRequest()
                     .body(new Response("Please fill all the fields", null));
-        if(!User.validateEmail(user.getEmail()))
-            return ResponseEntity
-                    .badRequest()
-                    .body(new Response("Please enter a valid email", null));
-        if(!User.validatePhoneNumber(user.getPhoneNumber()))
-            return ResponseEntity
-                    .badRequest()
-                    .body(new Response("Please enter a valid phone number", null));
-        if(!User.validateID(user.getReportsTo()))
-            return ResponseEntity
-                    .badRequest()
-                    .body(new Response("Please enter a valid Manager ID", null));
+
+        ResponseEntity<Response> validation = User.validateRequiredFields(user);
+        if (validation != null)
+            return validation;
+
         try{
             user.setID(UUID.randomUUID().toString());
             employeeService.addEmployee(user);
@@ -99,20 +92,9 @@ public class EmployeeController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Response> updateEmployee(@PathVariable String id, @RequestBody User user) {
-        if(!Objects.equals(user.getEmail(), "") && !User.validateEmail(user.getEmail())){
-            return ResponseEntity
-                    .badRequest()
-                    .body(new Response("Please enter a valid email", null));
-        }
-        if(!Objects.equals(user.getPhoneNumber(), "") && !User.validatePhoneNumber(user.getPhoneNumber())){
-            return ResponseEntity
-                    .badRequest()
-                    .body(new Response("Please enter a valid phone number", null));
-        }
-        if(!Objects.equals(user.getReportsTo(), "") && !User.validateID(user.getReportsTo()))
-            return ResponseEntity
-                    .badRequest()
-                    .body(new Response("Please enter a valid Manager ID", null));
+        ResponseEntity<Response> validation = User.validateRequiredFields(user);
+        if (validation != null)
+            return validation;
         try{
             User user1 = employeeService.updateEmployee(id, user);
             String message = user1 == null ? "User with given ID does not exist" : "Employee updated successfully";
