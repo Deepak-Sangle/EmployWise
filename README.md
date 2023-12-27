@@ -66,3 +66,13 @@
   ```
   - I have assumed that `name`, `phoneNumber`, `email` and `reportsTo`, and `profileImage` are all optional.
   - You obviously can not change the employee ID.
+
+
+### Assignment Notes
+
+- I tried to follow and satisfy all the criteria for both basic and intermediate levels.
+- For advance level, I have completed the Email Sending part, but could not complete remote hosting part because both `Heroku` and `AWS` requires a credit card to register and I do not have a valid (Visa, Mastercard or Amex affiliated) credit card.
+- All the error messages and input validations are done as mentioned.
+- I have used asynchronous programming for sending emails in order to make it very fast.
+
+### Thank You
