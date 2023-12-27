@@ -19,13 +19,12 @@ import java.util.concurrent.CompletableFuture;
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
-    MailService mailService;
+    private MailService mailService;
 
     @Override
     @Async
     public CompletableFuture<User> addEmployee(User user) throws MessagingException {
-        user.setID(UUID.randomUUID().toString());
-        sendEmailToManager(user);
+//        sendEmailToManager(user);
         EmployeeRepository.getInstance().saveUser(user);
         return CompletableFuture.completedFuture(user);
     }

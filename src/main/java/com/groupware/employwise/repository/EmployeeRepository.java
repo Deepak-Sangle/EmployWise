@@ -73,10 +73,6 @@ public class EmployeeRepository extends CouchDbRepositorySupport<User> {
         if(page < 0 || size < 0) {
             return new ArrayList<>();
         }
-        if (size == 0){
-            ViewQuery query = new ViewQuery().allDocs().includeDocs(true);
-            return db.queryView(query, User.class);
-        }
         return switch (sortBy.toLowerCase()) {
             case "name" -> findAllDocumentsAndSort(page, size, "all_documents_by_name");
             case "email" -> findAllDocumentsAndSort(page, size, "all_documents_by_email");
@@ -94,7 +90,13 @@ public class EmployeeRepository extends CouchDbRepositorySupport<User> {
     }
 
     List<User> findAllDocumentsAndSort(int page, int size, String sortBy) {
-        ViewQuery query = createQuery(sortBy).includeDocs(true).skip(page * size).limit(size);
+        ViewQuery query;
+        if (size == 0){
+            query = createQuery(sortBy).includeDocs(true);
+        }
+        else{
+            query = createQuery(sortBy).includeDocs(true).skip(page * size).limit(size);
+        }
         return db.queryView(query, User.class);
     }
 
