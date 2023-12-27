@@ -10,7 +10,6 @@ import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbConnector;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.ektorp.support.CouchDbRepositorySupport;
-import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
 import org.ektorp.support.Views;
 
@@ -71,15 +70,18 @@ public class EmployeeRepository extends CouchDbRepositorySupport<User> {
     }
 
     public List<User> getAllUser(int page, int size, String sortBy){
-        if(page < 0) {
+        if(page < 0 || size < 0) {
             return new ArrayList<>();
         }
+        if (size == 0){
+            ViewQuery query = new ViewQuery().allDocs().includeDocs(true);
+            return db.queryView(query, User.class);
+        }
         return switch (sortBy.toLowerCase()) {
-            case "name" -> findByAllDocumentsByName(page, size);
-            case "email" -> findByAllDocumentsByEmail(page, size);
-            default -> findByAllDocuments(page, size);
+            case "name" -> findAllDocumentsAndSort(page, size, "all_documents_by_name");
+            case "email" -> findAllDocumentsAndSort(page, size, "all_documents_by_email");
+            default -> findAllDocumentsAndSort(page, size, "all_documents");
         };
-
     }
 
     public void deleteUser(User u) {
@@ -91,18 +93,8 @@ public class EmployeeRepository extends CouchDbRepositorySupport<User> {
         }
     }
 
-    List<User> findByAllDocuments(int page, int size) {
-        ViewQuery query = createQuery("all_documents").includeDocs(true).skip(page * size).limit(size);
-        return db.queryView(query, User.class);
-    }
-
-    List<User> findByAllDocumentsByName(int page, int size){
-        ViewQuery query = createQuery("all_documents_by_name").includeDocs(true).skip(page * size).limit(size);
-        return db.queryView(query, User.class);
-    }
-
-    List<User> findByAllDocumentsByEmail(int page, int size){
-        ViewQuery query = createQuery("all_documents_by_email").includeDocs(true).skip(page * size).limit(size);
+    List<User> findAllDocumentsAndSort(int page, int size, String sortBy) {
+        ViewQuery query = createQuery(sortBy).includeDocs(true).skip(page * size).limit(size);
         return db.queryView(query, User.class);
     }
 

@@ -26,7 +26,7 @@ public class EmployeeController {
     @GetMapping("get-all-employees")
     public List<User> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int size,
             @RequestParam(defaultValue = "none") String sortBy
     ) {
         return employeeService.getAllEmployees(page, size, sortBy);
