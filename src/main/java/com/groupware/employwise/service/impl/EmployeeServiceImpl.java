@@ -12,7 +12,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -35,9 +34,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteEmployee(String id) {
+    public String deleteEmployee(String id) {
         User user = EmployeeRepository.getInstance().getUser(id);
+        if(user == null) {
+            return "User with given ID does not exist";
+        }
         EmployeeRepository.getInstance().deleteUser(user);
+        return "User deleted successfully";
     }
 
     @Override
@@ -57,7 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public User getNthLevelManager(int n, String id) {
-        if(n < 0) {
+        if(n < 0 || Objects.equals(id, "")) {
             return null;
         }
         User user = EmployeeRepository.getInstance().getUser(id);
