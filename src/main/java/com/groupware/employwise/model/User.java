@@ -1,8 +1,6 @@
 package com.groupware.employwise.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.ektorp.support.CouchDbDocument;
 
 import java.util.UUID;
@@ -86,6 +84,16 @@ public class User extends CouchDbDocument {
         this.ReportsTo = ReportsTo;
         this.ProfileImage = ProfileImage;
         this.ID = UUID.randomUUID().toString();
+    }
+
+    public static boolean validateEmail(String email) {
+        String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+        return email.matches(regexPattern);
+    }
+
+    public static boolean validatePhoneNumber(String phoneNumber) {
+        return phoneNumber.matches("^[1-9][0-9]{9}$");
     }
 
 }

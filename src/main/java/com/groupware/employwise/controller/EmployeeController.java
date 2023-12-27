@@ -3,31 +3,47 @@ package com.groupware.employwise.controller;
 import com.groupware.employwise.model.Response;
 import com.groupware.employwise.model.User;
 import com.groupware.employwise.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+
 @RequestMapping("/employee")
 @RestController
+@Validated
 public class EmployeeController {
 
     @Autowired
     EmployeeService employeeService;
 
     @PostMapping("/create")
-    public ResponseEntity<Response> createEmployee(@RequestBody User user) {
+    public ResponseEntity<Response> createEmployee(@Valid @RequestBody User user) {
+        if(Objects.equals(user.getName(), "") || Objects.equals(user.getEmail(), "") || Objects.equals(user.getPhoneNumber(), "") || Objects.equals(user.getReportsTo(), ""))
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response("Please fill all the fields", null));
+        if(!User.validateEmail(user.getEmail()))
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response("Please enter a valid email", null));
+        if(!User.validatePhoneNumber(user.getPhoneNumber()))
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response("Please enter a valid phone number", null));
         try{
             user.setID(UUID.randomUUID().toString());
-            System.out.println(user.getID());
             employeeService.addEmployee(user);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new Response("Employee created successfully", user));
-        }
-        catch (Exception e){
+        } catch (Exception e){
             System.out.println(e);
             return ResponseEntity.badRequest().build();
         }
