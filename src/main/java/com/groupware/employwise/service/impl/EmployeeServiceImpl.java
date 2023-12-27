@@ -23,7 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Async
     public CompletableFuture<User> addEmployee(User user) throws MessagingException {
-//        sendEmailToManager(user);
+        sendEmailToManager(user);
         EmployeeRepository.getInstance().saveUser(user);
         return CompletableFuture.completedFuture(user);
     }

@@ -2,6 +2,7 @@ package com.groupware.employwise.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ektorp.support.CouchDbDocument;
+import java.util.regex.Pattern;
 
 import java.util.UUID;
 
@@ -90,6 +91,11 @@ public class User extends CouchDbDocument {
         String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
                 + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
         return email.matches(regexPattern);
+    }
+
+    public static boolean validateID(String id){
+        Pattern UUID_PATTERN = Pattern.compile("^[a-fA-F0-9]{32}$");
+        return UUID_PATTERN.matcher(id).matches();
     }
 
     public static boolean validatePhoneNumber(String phoneNumber) {
