@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RequestMapping("/employee")
 @RestController
@@ -16,8 +18,9 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @PostMapping("/create")
-    public User createEmployee(@RequestBody User user) throws MessagingException {
-        return employeeService.addEmployee(user);
+    public User createEmployee(@RequestBody User user) throws MessagingException, ExecutionException, InterruptedException {
+        employeeService.addEmployee(user);
+        return user;
     }
 
     @GetMapping("get-all-employees")

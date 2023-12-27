@@ -6,11 +6,14 @@ import com.groupware.employwise.service.EmployeeService;
 import com.groupware.employwise.service.MailService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -19,11 +22,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     MailService mailService;
 
     @Override
-    public User addEmployee(User user) throws MessagingException {
+    @Async
+    public CompletableFuture<User> addEmployee(User user) throws MessagingException {
         user.setID(UUID.randomUUID().toString());
         sendEmailToManager(user);
         EmployeeRepository.getInstance().saveUser(user);
-        return user;
+        return CompletableFuture.completedFuture(user);
     }
 
     @Override
@@ -68,12 +72,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void sendEmailToManager(User user) throws MessagingException {
+    public void sendEmailToManager(User user)  {
         User manager = EmployeeRepository.getInstance().getUser(user.getReportsTo());
         if(manager == null) {
             return;
         }
-        mailService.sendEmail(manager.getEmail(), "New Employee Added", "<p>A new employee has been added to your team. His phone number is " + user.getPhoneNumber() + " and email is " + user.getEmail() + ". </p>");
+        String body = """
+                <p>A new employee has been added to your team.
+                Meet <strong>%s</strong>. His phone number is %s and email is <a href="mailto:%s?subject=Welcome Aboard&body=Dear %s, Welcome to the team. I am your manager %s">%s</a>.
+                </p>""";
+        body = String.format(body, user.getName(), user.getPhoneNumber(), user.getEmail(), user.getName(), manager.getName(), user.getEmail());
+        Context context = new Context();
+        context.setVariable("message", body);
+        mailService.sendEmail(manager.getEmail(), "New Employee joined your team",  body, "email-template", context);
     }
 
 }
